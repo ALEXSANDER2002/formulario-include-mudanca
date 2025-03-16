@@ -1,7 +1,14 @@
 "use client"
 
-import { Progress } from "../components/ui/progress"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 
-export default function SyntheticV0PageForDeployment() {
-  return <Progress />
+export default function Home() {
+  const router = useRouter()
+  
+  useEffect(() => {
+    router.push("/pagina")
+  }, [router])
+  
+  return null
 }
