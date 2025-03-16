@@ -4,8 +4,9 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { MessageSquare, Send, AlertCircle, ChevronRight } from "lucide-react"
+import { MessageSquare, Send, AlertCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import emailjs from '@emailjs/browser'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,11 +14,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { enviarFeedback } from "@/lib/acoes"
 import { usarMobile } from "@/hooks/usar-mobile"
 
-// Esquema de validação do formulário usando Zod
-// Define as regras para cada campo do formulário
 const esquemaFormulario = z.object({
   nome: z.string().min(2, {
     message: "O nome deve ter pelo menos 2 caracteres.",
@@ -35,51 +33,51 @@ const esquemaFormulario = z.object({
     required_error: "Por favor selecione o tipo de contribuição.",
   }),
   contribuicao: z
-    .string()
-    .min(10, {
-      message: "A contribuição deve ter pelo menos 10 caracteres.",
-    })
-    .max(1000, {
-      message: "A contribuição não pode ter mais de 1000 caracteres.",
-    }),
+      .string()
+      .min(10, {
+        message: "A contribuição deve ter pelo menos 10 caracteres.",
+      })
+      .max(1000, {
+        message: "A contribuição não pode ter mais de 1000 caracteres.",
+      }),
 })
 
-export function FormularioFeedback() {
-  // Estados para controlar o comportamento do formulário
-  const [estaEnviando, setEstaEnviando] = useState(false) // Controla o estado de envio
-  const [progressoFormulario, setProgressoFormulario] = useState(0) // Controla a barra de progresso
-  const [estaVisivel, setEstaVisivel] = useState(false) // Controla a animação de entrada
-  const ehMobile = usarMobile() // Detecta se é dispositivo móvel
-  const roteador = useRouter() // Para navegação após envio
+// Configurações do EmailJS
+const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || 'service_9mrxr3j'
+const EMAILJS_TEMPLATE_ADMIN = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ADMIN || 'template_tohozp7'
+const EMAILJS_TEMPLATE_CLIENT = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_CLIENT || 'template_sgsfc4e'
+const EMAILJS_PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY || 'Dmw80YNi6d_7zEIVM'
 
-  // Configuração do formulário com React Hook Form e Zod
+export function FormularioFeedback() {
+  const [estaEnviando, setEstaEnviando] = useState(false)
+  const [progressoFormulario, setProgressoFormulario] = useState(0)
+  const [estaVisivel, setEstaVisivel] = useState(false)
+  const ehMobile = usarMobile()
+  const roteador = useRouter()
+
   const formulario = useForm<z.infer<typeof esquemaFormulario>>({
     resolver: zodResolver(esquemaFormulario),
     defaultValues: {
       nome: "",
       email: "",
-      curso: "engcomp", // Valor padrão definido como Engenharia da Computação
+      curso: "engcomp",
       semestre: "",
       tipoContribuicao: "",
       contribuicao: "",
     },
-    mode: "onChange", // Validação em tempo real ao alterar campos
+    mode: "onChange",
   })
 
-  // Calcula a porcentagem de preenchimento do formulário
   const calcularProgresso = () => {
     const valoresFormulario = formulario.getValues()
-    // Removemos "curso" da lista de campos obrigatórios já que está preenchido por padrão
     const camposObrigatorios = ["nome", "email", "semestre", "tipoContribuicao", "contribuicao"]
     const camposPreenchidos = camposObrigatorios.filter((campo) => {
       const valor = valoresFormulario[campo as keyof typeof valoresFormulario]
       return valor && typeof valor === "string" && valor.trim().length > 0
     })
-
     return Math.round((camposPreenchidos.length / camposObrigatorios.length) * 100)
   }
 
-  // Atualiza a barra de progresso quando o formulário muda
   useEffect(() => {
     const inscricao = formulario.watch(() => {
       setProgressoFormulario(calcularProgresso())
@@ -87,28 +85,64 @@ export function FormularioFeedback() {
     return () => inscricao.unsubscribe()
   }, [formulario.watch])
 
-  // Animação de entrada ao montar o componente
   useEffect(() => {
     setEstaVisivel(true)
   }, [])
 
-  // Função executada ao enviar o formulário
   async function aoEnviar(valores: z.infer<typeof esquemaFormulario>) {
     setEstaEnviando(true)
     try {
-      // Envia os dados para o servidor via Server Action
-      await enviarFeedback({
+      // Formatar data
+      const dataFormatada = new Date().toLocaleString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      })
+
+      // Parâmetros para os templates
+      const paramsAdmin = {
         name: valores.nome,
         email: valores.email,
         course: valores.curso,
         semester: valores.semestre,
         contributionType: valores.tipoContribuicao,
         contribution: valores.contribuicao,
-      })
-      // Redireciona para a página de sucesso
+        time: dataFormatada,
+      }
+
+      const paramsCliente = {
+        name: valores.nome,
+        email: valores.email,
+        time: dataFormatada,
+      }
+
+      // Enviar e-mails paralelamente
+      const promises = [
+        emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_ADMIN,
+            paramsAdmin,
+            EMAILJS_PUBLIC_KEY
+        ),
+        emailjs.send(
+            EMAILJS_SERVICE_ID,
+            EMAILJS_TEMPLATE_CLIENT,
+            paramsCliente,
+            EMAILJS_PUBLIC_KEY
+        )
+      ]
+
+      await Promise.all(promises)
       roteador.push("/sucesso")
+
     } catch (erro) {
-      console.error("Erro ao enviar feedback:", erro)
+      console.error("Erro ao enviar formulário:", erro)
+      alert("Erro ao enviar o formulário. Por favor, tente novamente.")
+    } finally {
       setEstaEnviando(false)
     }
   }
