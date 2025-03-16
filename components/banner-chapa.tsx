@@ -81,13 +81,7 @@ export function BannerChapa() {
               className="bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-lg px-4 py-2.5 shadow-[0_4px_10px_rgba(79,70,229,0.3)] transition-all duration-300 transform hover:scale-105 hover:shadow-[0_6px_15px_rgba(79,70,229,0.4)] flex items-center gap-2 group"
             >
               <MessageSquare className="h-4 w-4" />
-              <span className="font-medium">Enviar Feedback</span>
-            </Button>
-            
-            {/* Botão de conhecer propostas */}
-            <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg px-4 py-2.5 shadow-[0_4px_10px_rgba(37,99,235,0.3)] transition-all duration-300 transform hover:scale-105 hover:shadow-[0_6px_15px_rgba(37,99,235,0.4)] flex items-center gap-2 group">
-              <span className="font-medium">Conheça nossas propostas</span>
-              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <span className="font-medium">Preencher Formulário</span>
             </Button>
           </div>
         </div>

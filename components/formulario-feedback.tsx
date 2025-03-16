@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { MessageSquare, Send, AlertCircle } from "lucide-react"
+import { MessageSquare, Send, AlertCircle, ChevronRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { Button } from "@/components/ui/button"
@@ -205,7 +205,7 @@ export function FormularioFeedback() {
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="seu.email@unifesp.edu.br"
+                        placeholder="seu.email@unifesspa.edu.br"
                         {...field}
                         className="bg-[#0a1225] border-[#1a2547] text-white focus:border-indigo-500 focus:ring-indigo-500 rounded-lg h-11 md:h-12 shadow-sm transition-all duration-200 group-hover:border-indigo-500/50"
                       />
@@ -385,6 +385,28 @@ export function FormularioFeedback() {
                   <span>Preencha todos os campos</span>
                 )}
               </Button>
+              
+              {/* Separador com texto */}
+              <div className="relative mt-6 mb-4 animate-fade-in opacity-0" style={{ animationDelay: "0.75s" }}>
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[#1a2547]"></div>
+                </div>
+                <div className="relative flex justify-center">
+                  <span className="bg-[#0a1225] px-4 text-sm text-gray-400">Ou</span>
+                </div>
+              </div>
+              
+              {/* Botão para conhecer propostas */}
+              <div className="animate-fade-in opacity-0" style={{ animationDelay: "0.8s" }}>
+                <Button 
+                  type="button"
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg h-11 md:h-12 shadow-[0_4px_10px_rgba(37,99,235,0.3)] transition-all duration-300 transform hover:scale-[1.01] hover:shadow-[0_6px_15px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 group"
+                  onClick={() => window.open('#', '_blank')}
+                >
+                  <span className="font-medium">Conheça nossas propostas</span>
+                  <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Button>
+              </div>
             </form>
           </Form>
         </div>

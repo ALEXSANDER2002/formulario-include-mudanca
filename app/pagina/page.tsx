@@ -92,7 +92,7 @@ export default function Inicio() {
         className={`fixed bottom-6 right-6 z-50 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-full p-3 shadow-[0_4px_10px_rgba(79,70,229,0.3)] transition-all duration-300 transform hover:scale-110 hover:shadow-[0_6px_15px_rgba(79,70,229,0.4)] ${
           mostrarBotaoFlutuante ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'
         }`}
-        aria-label="Ir para o formulário"
+        aria-label="Preencher Formulário"
       >
         <MessageSquare className="h-6 w-6" />
       </button>
