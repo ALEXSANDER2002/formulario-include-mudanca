@@ -391,21 +391,12 @@ export function FormularioFeedback() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-[#1a2547]"></div>
                 </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-[#0a1225] px-4 text-sm text-gray-400">Ou</span>
-                </div>
+                
               </div>
               
               {/* Botão para conhecer propostas */}
               <div className="animate-fade-in opacity-0" style={{ animationDelay: "0.8s" }}>
-                <Button 
-                  type="button"
-                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg h-11 md:h-12 shadow-[0_4px_10px_rgba(37,99,235,0.3)] transition-all duration-300 transform hover:scale-[1.01] hover:shadow-[0_6px_15px_rgba(37,99,235,0.4)] flex items-center justify-center gap-2 group"
-                  onClick={() => window.open('#', '_blank')}
-                >
-                  <span className="font-medium">Conheça nossas propostas</span>
-                  <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
+               
               </div>
             </form>
           </Form>
